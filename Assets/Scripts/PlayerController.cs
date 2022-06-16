@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class PlayerController : MonoBehaviour
 {
     Rigidbody playerRB;
@@ -15,18 +15,19 @@ public class PlayerController : MonoBehaviour
 
     AudioSource playerAudio;
 
-    float jumpForce = 700f;
-    float gravityModifier = 2.5f;
+    public float jumpForce = 1000f;
+   
     public bool isOnGround = true;
     public bool gameOver = false;
 
     // Start is called before the first frame update
     void Start()
     {
+        
         playerRB = GetComponent<Rigidbody>();
         playerAnim = GetComponent<Animator>();
         playerAudio = GetComponent<AudioSource>();
-        Physics.gravity *= gravityModifier;        
+        Physics.gravity = new Vector3(0.0f, -45f, 0f);        
     }
 
     // Update is called once per frame
@@ -56,6 +57,7 @@ public class PlayerController : MonoBehaviour
 
         else if(collision.gameObject.CompareTag("Obstacle"))
         {
+            
             dirtParticle.Stop();
             playerAudio.PlayOneShot(crashSound, 1.0f);
 
@@ -69,6 +71,15 @@ public class PlayerController : MonoBehaviour
             playerAnim.SetInteger("DeathType_int", 1);
                        
             crashParticle.Play();
+            StartCoroutine(waitFor(3f));
+      
         }
     }
-}
+
+    IEnumerator waitFor(float timeToWait)
+    {
+        yield return new WaitForSeconds(timeToWait);      
+        SceneManager.LoadScene("Prototype 3");
+    }
+
+    }
